@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "PaliyoApp",
-    "slug": "PaliyoApp",
+    "name": "angular",
+    "slug": "snack-235e153e-0bc0-4c8c-a1da-d47dd6854308",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -25,6 +25,7 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "description": "Example usage"
   }
 }
