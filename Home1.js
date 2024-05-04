@@ -17,6 +17,8 @@ import BottomNavBar from './BottomNavBar';
 import UserImage from './assets/icon.png';
 import { useFocusEffect } from '@react-navigation/native';
 import { API_BASE_URL } from './APIUrl';
+import { RefreshControl } from 'react-native';
+
 
 export default function HomeScreen() {
   const [posts, setPosts] = useState([]);
@@ -30,10 +32,25 @@ export default function HomeScreen() {
   const [commentTexts, setCommentTexts] = useState({});
   const [showSearchInput, setShowSearchInput] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [refreshing, setRefreshing] = useState(false);
+
 
   useEffect(() => {
     fetchPosts();
   }, []);
+
+
+const onRefresh = async () => {
+  setRefreshing(true);
+  try {
+    await fetchPosts(); // your function to fetch posts
+  } catch (error) {
+    console.error('Failed to refresh:', error);
+  }
+  setRefreshing(false);
+};
+
+
 
   const toggleSearchInput = () => {
     setShowSearchInput((prev) => !prev); // Toggle the visibility of the search input
@@ -160,6 +177,8 @@ export default function HomeScreen() {
 
         if (showSearchInput) {
           setShowSearchInput(false);
+          setSearchQuery('')
+          fetchPosts();
           return true; // Prevent default back behavior
         }
 
@@ -353,9 +372,8 @@ export default function HomeScreen() {
           <View style={styles.postContainer}>
             <View style={styles.userHeader}>
               <Image source={UserImage} style={styles.userIcon} />
-              <Text style={styles.username}>{item.postedBy&& item.postedBy.username}</Text>
+              <Text style={styles.username}>{item.postedBy.username}</Text>
             </View>
-            
             <Image
               source={{ uri: item.postImages.mediaUrl }}
               style={styles.postImage}
@@ -481,7 +499,14 @@ export default function HomeScreen() {
             )}
           </View>
         )}
-        keyExtractor={(item) => item._id}
+         keyExtractor={item => item._id} 
+         refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          colors={['#9Bd35A', '#689F38']}  // Optional: customize the colors used
+        />
+      }
       />
       <BottomNavBar toggleSearchInput={toggleSearchInput} searchIcon= {true}/>
     </View>

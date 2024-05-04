@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "angular",
-    "slug": "snack-235e153e-0bc0-4c8c-a1da-d47dd6854308",
+    "name": "Paliyo",
+    "slug": "PaliyoApp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -20,12 +20,19 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      }
+        "backgroundColor": "#ffffff",
+        "package": "com.zaverchandmeghani.paliyo"
+      },
+      "package": "com.zaverchandmeghani.paliyo"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "description": "Example usage"
+    "description": "Example usage",
+    "extra": {
+      "eas": {
+        "projectId": "8c269329-b395-4980-8a50-adddcbb753e7"
+      }
+    }
   }
 }
