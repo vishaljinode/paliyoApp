@@ -8,6 +8,7 @@ import {
   TextInput,
   TouchableOpacity,
   Share,
+  RefreshControl,
   BackHandler,
   ActivityIndicator,
 } from 'react-native';
@@ -30,6 +31,7 @@ export default function HomeScreen() {
   const [commentTexts, setCommentTexts] = useState({});
   const [showSearchInput, setShowSearchInput] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     fetchPosts();
@@ -37,8 +39,7 @@ export default function HomeScreen() {
 
   const toggleSearchInput = () => {
     setShowSearchInput((prev) => !prev); // Toggle the visibility of the search input
-  };
-  
+  }; 
   
 
   const filteredPosts = posts.filter(
@@ -264,8 +265,15 @@ export default function HomeScreen() {
       console.error('Failed to fetch posts:', error);
     } finally {
       setIsLoading(false);
+      setRefreshing(false);
     }
   };
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    fetchPosts();
+  };
+
   const toggleLike = async (postId) => {
     const token = await getToken();
     const isLiked = likes[postId];
@@ -330,7 +338,7 @@ export default function HomeScreen() {
   if (isLoading) {
     return (
       <View style={styles.container}>
-        <ActivityIndicator size="large" color="#0000ff" />
+        <ActivityIndicator size="large" color="#000" />
       </View>
     );
   }
@@ -480,9 +488,29 @@ export default function HomeScreen() {
               </View>
             )}
           </View>
-        )}
-        keyExtractor={(item) => item._id}
+        )
+      
+      }   refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          colors={['#0000ff']}
+          tintColor="#0000ff"
+          title="Pull to refresh"
+          titleColor="#0000ff"
+        />
+      }
+        keyExtractor={(item) => item._id
+
+
+        }
       />
+      
+
+   
+
+
+
       <BottomNavBar toggleSearchInput={toggleSearchInput} searchIcon= {true}/>
     </View>
   );

@@ -4,7 +4,7 @@ import {
   Text,
   View,
   TextInput,
-  TouchableOpacity,
+  TouchableOpacity, ActivityIndicator,
   Alert,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -24,83 +24,114 @@ const LoginScreen = ({ navigation }) => {
   const [resetBoxes, setResetBoxes] = useState(false);
   const [password1, setPassword1] = useState('');
   const [password2, setPassword2] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+
+
+  const validatePassword = (password) => {
+    // Password validation criteria
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
+    return passwordRegex.test(password);
+  };
+  const validateEmail = (email) => {
+    // Regular expression for email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
 
   const handleSignUp = async () => {
+
+    if (!username.trim()) {
+      alert('Please enter your username.');
+      return;
+    }
+
+    if (!email.trim()) {
+      alert('Please enter your email.');
+      return;
+    }
+
+    if (!password.trim()) {
+      alert('Please enter your password.');
+      return;
+    }
+
+    if (!validatePassword(password)) {
+      Alert.alert('Please enter a password with at least 6 characters, one special character, one number, and one capital letter.');
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      alert('Please enter a valid email address.');
+      return;
+    }
+
+    setIsLoading(true);
     try {
       const data = await signup(username, email, password);
       if (data.Token) {
         await AsyncStorage.setItem('userSignUpToken', data.Token);
         setIsUserOTP(true);
+        setIsLoading(false);
       } else {
         Alert.alert('Signup Failed', 'No token received');
+        setIsLoading(false);
       }
     } catch (error) {
       Alert.alert('Error', error.message);
+      setIsLoading(false);
     }
   };
-
   const handleSignIn = async () => {
+
+    if (!email.trim()) {
+      alert('Please enter your email.');
+      return;
+    }
+    if (!validateEmail(email)) {
+      alert('Please enter a valid email address.');
+      return;
+    }
+    if (!password.trim()) {
+      alert('Please enter your password.');
+      return;
+    }
+
+
+
+    setIsLoading(true);
     try {
       const data = await signin(email, password);
-     
+
       if (data.Token) {
         await AsyncStorage.setItem('userToken', data.Token);
         const userDataString = JSON.stringify(data.User);
         await AsyncStorage.setItem('user', userDataString);
 
+        setIsLoading(false);
         navigation.navigate('Home');
+
       } else {
         Alert.alert('Signin Failed', 'Something Went Wrong!');
+        setIsLoading(false);
       }
     } catch (error) {
       Alert.alert('Invalid Credentials', 'Please Check Email Or Password !');
+      setIsLoading(false);
     }
   };
-
-  const toggleSignUp = () => {
-    setIsSignUp(!isSignUp);
-    setIsForgotOTP(false);
-    setIsForgotPassword(false);
-    setIsUserOTP(false);
-    setUsername('');
-    setEmail('');
-    setPassword(''); // Optionally reset the username when toggling
-  };
-
-  const toggleForgotPassword = () => {
-    setIsForgotPassword(!isForgotPassword);
-    setIsForgotOTP(false);
-    setIsUserOTP(false);
-
-    setEmail(''); // Clear email input when toggling
-  };
-
-  const toggleUserOTP = async () => {
-    await AsyncStorage.removeItem('userSignUpToken'); // Replace 'userToken' with your actual key
-    await AsyncStorage.removeItem('user');
-    await AsyncStorage.removeItem('NewToken');
-    await AsyncStorage.removeItem('newForgotPassUser');
-    await AsyncStorage.removeItem('userToken');
-    if (isUserOTP) {
-      setIsForgotPassword(false);
-      setIsForgotOTP(false);
-      setIsUserOTP(false);
-      setResetBoxes(false);
-      setIsSignUp(true);
-      setEmail('');
-    } else {
-      setIsForgotPassword(false);
-      setIsForgotOTP(false);
-      setIsUserOTP(false);
-      setIsSignUp(false);
-      setResetBoxes(false);
-      setEmail('');
-    }
-  };
-
   const handleForgotPassword = async () => {
+    if (!email.trim()) {
+      alert('Please enter your email.');
+      return;
+    }
+    if (!validateEmail(email)) {
+      alert('Please enter a valid email address.');
+      return;
+    }
+
     setIsForgotOTP(true);
-  
+
 
     try {
       const response = await fetch(
@@ -115,10 +146,10 @@ const LoginScreen = ({ navigation }) => {
       );
 
       const data = await response.json(); // Parses the JSON response
-      
+
 
       if (response.ok) {
-       
+
         setIsForgotPassword(true);
         setIsForgotOTP(true);
       } else {
@@ -130,13 +161,10 @@ const LoginScreen = ({ navigation }) => {
       throw error; // Optionally re-throwing error if you want further error handling upstream
     }
   };
-
-  const getUserSignupToken = async () => {
-    return await AsyncStorage.getItem('userSignUpToken');
-  };
-
   const handleVerifyOtp = async () => {
-    const userSignupToken = await getUserSignupToken(); 
+
+
+    const userSignupToken = await getUserSignupToken();
 
     try {
       // await forgotPassword(email);
@@ -156,19 +184,19 @@ const LoginScreen = ({ navigation }) => {
 
           const data = await response.json(); // Fetches and parses the JSON response
 
-          if (response.ok) {            
+          if (response.ok) {
             await AsyncStorage.setItem('userToken', data.Token);
             const userDataString = JSON.stringify(data.User);
             await AsyncStorage.setItem('user', userDataString);
             navigation.navigate('Home');
           } else {
-           
+
             console.error('User OTP verification Error: ', data);
           }
         } catch (error) {
-        
+
           console.error('User OTP verification Error:', error);
-          throw error; 
+          throw error;
         }
       }
 
@@ -184,23 +212,23 @@ const LoginScreen = ({ navigation }) => {
               body: JSON.stringify({ email, otp }),
             }
           );
-      
+
           const data = await response.json(); // Parses the JSON response    
 
-         
-          
+
+
           if (response.ok) {
-    
-            await AsyncStorage.setItem('NewToken', data.Token);          
+
+            await AsyncStorage.setItem('NewToken', data.Token);
 
             const userDataString = JSON.stringify(data.forgetPassUser);
             await AsyncStorage.setItem('newForgotPassUser', userDataString);
 
 
-            setIsForgotOTP(false); 
-            setIsForgotPassword(false); 
-            setResetBoxes(true); 
-          } else {           
+            setIsForgotOTP(false);
+            setIsForgotPassword(false);
+            setResetBoxes(true);
+          } else {
             console.error('Forget password OTP verification Error:', data);
             alert('OTP verification failed. Please try again.'); // User-friendly error message
           }
@@ -211,18 +239,13 @@ const LoginScreen = ({ navigation }) => {
           throw error; // Optionally re-throw if you handle errors higher up as well
         }
       }
-      
-     
+
+
       // Alert.alert("Password Reset", "Check your email for instructions to reset your password.");
     } catch (error) {
       Alert.alert('Error', error.message);
     }
   };
-
-  // const getForgotPassToken = async () => {
-  //   return 
-  // };
-
   const handleResetPassword = async () => {
     const forgotPassToken = await AsyncStorage.getItem('NewToken');
     if (password1 !== password2) {
@@ -265,6 +288,61 @@ const LoginScreen = ({ navigation }) => {
       }
     }
   };
+
+
+
+  const toggleSignUp = () => {
+    setIsSignUp(!isSignUp);
+    setIsForgotOTP(false);
+    setIsForgotPassword(false);
+    setIsUserOTP(false);
+    setUsername('');
+    setEmail('');
+    setPassword(''); // Optionally reset the username when toggling
+  };
+  const toggleForgotPassword = () => {
+    setIsForgotPassword(!isForgotPassword);
+    setIsForgotOTP(false);
+    setIsUserOTP(false);
+
+    setEmail(''); // Clear email input when toggling
+  };
+  const toggleUserOTP = async () => {
+    await AsyncStorage.removeItem('userSignUpToken'); // Replace 'userToken' with your actual key
+    await AsyncStorage.removeItem('user');
+    await AsyncStorage.removeItem('NewToken');
+    await AsyncStorage.removeItem('newForgotPassUser');
+    await AsyncStorage.removeItem('userToken');
+    if (isUserOTP) {
+      setIsForgotPassword(false);
+      setIsForgotOTP(false);
+      setIsUserOTP(false);
+      setResetBoxes(false);
+      setIsSignUp(true);
+      setEmail('');
+    } else {
+      setIsForgotPassword(false);
+      setIsForgotOTP(false);
+      setIsUserOTP(false);
+      setIsSignUp(false);
+      setResetBoxes(false);
+      setEmail('');
+    }
+  };
+
+
+
+  const getUserSignupToken = async () => {
+    return await AsyncStorage.getItem('userSignUpToken');
+  };
+
+
+
+  // const getForgotPassToken = async () => {
+  //   return 
+  // };
+
+
 
   return (
     <View style={styles.container}>
@@ -326,20 +404,32 @@ const LoginScreen = ({ navigation }) => {
         </View>
       )}
       {!isForgotPassword && !isUserOTP && !resetBoxes && (
-        <TouchableOpacity
-          onPress={isSignUp ? toggleSignUp : toggleForgotPassword}>
-          <Text style={styles.forgot}>
-            {isSignUp ? 'Already signed up?' : 'Forgot Password?'}
-          </Text>
-        </TouchableOpacity>
+        <>
+          {isLoading && (
+            <ActivityIndicator size="medium" color="#ffffff" />
+          )}
+          <TouchableOpacity
+            onPress={isSignUp ? toggleSignUp : toggleForgotPassword}>
+            <Text style={styles.forgot}>
+              {isSignUp ? 'Already signed up?' : 'Forgot Password?'}
+            </Text>
+          </TouchableOpacity>
+        </>
       )}
+
+
       {!isForgotPassword && !isUserOTP && !resetBoxes && (
-        <TouchableOpacity
-          style={styles.loginBtn}
-          onPress={isSignUp ? handleSignUp : handleSignIn}>
-          <Text style={styles.loginText}>{isSignUp ? 'SIGNUP' : 'LOGIN'}</Text>
-        </TouchableOpacity>
+        <>
+          <TouchableOpacity
+            style={styles.loginBtn}
+            onPress={isSignUp ? handleSignUp : handleSignIn}>
+            <Text style={styles.loginText}>{isSignUp ? 'SIGNUP' : 'LOGIN'}</Text>
+          </TouchableOpacity>
+
+        </>
       )}
+
+
       {!isForgotPassword && !isUserOTP && !resetBoxes && (
         <TouchableOpacity onPress={toggleSignUp}>
           <Text style={styles.loginText}>{isSignUp ? 'LOGIN' : 'SIGNUP'}</Text>
