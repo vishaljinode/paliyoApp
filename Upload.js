@@ -170,8 +170,6 @@ formData.append('file', {
         source={image ? { uri: image } : null}
         style={styles.imageBackground}>
 
-
-
         <TouchableOpacity
           style={styles.selectImageButton}
           onPress={selectImage}>
