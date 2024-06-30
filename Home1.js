@@ -248,7 +248,7 @@ const onRefresh = async () => {
 
     try {
       const response = await fetch(
-        'https://mynewapi-9ghe.onrender.com/posts/getAllPosts',
+        API_BASE_URL+'/posts/getAllPosts',
         {
           method: 'GET',
           headers: {
@@ -289,8 +289,8 @@ const onRefresh = async () => {
     const token = await getToken();
     const isLiked = likes[postId];
     const url = isLiked
-      ? 'https://mynewapi-9ghe.onrender.com/posts/unlikePost'
-      : 'https://mynewapi-9ghe.onrender.com/posts/likePost';
+      ? API_BASE_URL+'/posts/unlikePost'
+      : API_BASE_URL+'/posts/likePost';
 
     try {
       const response = await fetch(url, {
@@ -319,8 +319,8 @@ const onRefresh = async () => {
     const token = await getToken();
     const isSaved = savedPosts[postId]; // Check if post is already saved
     const url = isSaved
-      ? 'https://mynewapi-9ghe.onrender.com/posts/unsavePost'
-      : 'https://mynewapi-9ghe.onrender.com/posts/savePost';
+      ? API_BASE_URL+'/posts/unsavePost'
+      : API_BASE_URL+'/posts/savePost';
 
     try {
       const response = await fetch(url, {

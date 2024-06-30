@@ -2,7 +2,7 @@
   "expo": {
     "name": "Paliyo",
     "slug": "PaliyoApp",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/logo.png",
     "userInterfaceStyle": "light",
@@ -18,7 +18,7 @@
       "supportsTablet": true
     },
     "android": {
-      "versionCode": 2,
+      "versionCode": 3,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff",
@@ -29,7 +29,7 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "description": "Example usage",
+    "description": "Paliyo application is for people who sacrifice for protect his people...",
     "extra": {
       "eas": {
         "projectId": "8c269329-b395-4980-8a50-adddcbb753e7"

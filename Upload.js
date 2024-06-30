@@ -12,7 +12,7 @@ import ModalDropdown from 'react-native-modal-dropdown';
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BottomNavBar from './BottomNavBar';
-
+import {API_BASE_URL} from './APIUrl'
 
 const searchIcon = false;
 
@@ -96,7 +96,7 @@ const selectImage = async () => {
   
 const handleSubmit = async () => {
   try {
-    const apiUrl = 'https://mynewapi-9ghe.onrender.com/posts/add';
+   // const apiUrl = 'https://mynewapi-9ghe.onrender.com/posts/add';
     const usernameToken = await getToken();
     console.log("Title: ", title);
 console.log("Description: ", description);
@@ -121,7 +121,7 @@ formData.append('file', {
 
 
     // Making POST request with authentication token
-    const response = await fetch(apiUrl, {
+    const response = await fetch(API_BASE_URL, {
    method: 'POST',
    body: formData,
    headers: {

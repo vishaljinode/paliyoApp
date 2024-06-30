@@ -135,7 +135,7 @@ const LoginScreen = ({ navigation }) => {
 
     try {
       const response = await fetch(
-        'https://mynewapi-9ghe.onrender.com/users/forgotPassOTP',
+        API_BASE_URL+'/users/forgotPassOTP',
         {
           method: 'POST',
           headers: {
@@ -171,7 +171,7 @@ const LoginScreen = ({ navigation }) => {
       if (isUserOTP) {
         try {
           const response = await fetch(
-            'https://mynewapi-9ghe.onrender.com/users/verifyUserOTP',
+            API_BASE_URL+'/users/verifyUserOTP',
             {
               method: 'POST',
               headers: {
@@ -203,7 +203,7 @@ const LoginScreen = ({ navigation }) => {
       if (isForgotOTP) {
         try {
           const response = await fetch(
-            'https://mynewapi-9ghe.onrender.com/users/verifyForgotPass',
+            API_BASE_URL+'/users/verifyForgotPass',
             {
               method: 'POST',
               headers: {
@@ -254,7 +254,7 @@ const LoginScreen = ({ navigation }) => {
     if (password1 === password2) {
       try {
         const response = await fetch(
-          'https://mynewapi-9ghe.onrender.com/users/resetPassword',
+          API_BASE_URL+'/users/resetPassword',
           {
             method: 'PUT',
             headers: {

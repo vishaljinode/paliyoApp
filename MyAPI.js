@@ -1,6 +1,6 @@
 import axios from 'axios';
-
-const API_BASE_URL = 'https://mynewapi-9ghe.onrender.com'; // Change this to your API's base URL
+import {API_BASE_URL} from './APIUrl'
+// const API_BASE_URL = 'https://mynewapi-9ghe.onrender.com'; // Change this to your API's base URL
 
 export const signup = async (username, email, password) => {
   try {
